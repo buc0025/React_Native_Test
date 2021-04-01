@@ -1,75 +1,65 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, View, FlatList, Alert, TouchableWithoutFeedback, Keyboard } from 'react-native';
-import Header from './components/header';
-import TodoItem from './components/todoItem';
-import AddTodo from './components/addTodo';
-import Sandbox from './components/sandbox';
+import { StatusBar } from 'expo-status-bar';
+import React, {useState} from 'react';
+import { StyleSheet, Text, View, TextInput, Button, Alert, TouchableOpacity, Image } from 'react-native';
 
-export default function App() {
-  const [todos, setTodos] = useState([
-    { text: 'take out trash', key: '1' },
-    { text: 'work out', key: '2' },
-    { text: 'wash dishes', key: '3' }
-  ]);
-
-  const pressHandler = (key) => {
-    setTodos((prevTodos) => {
-      return prevTodos.filter(todo => todo.key != key);
-    });
+export default class App extends React.Component {
+  constructor() {
+    super();
+    this.state = {
+      randomColor: null,
+      buttonColor: null
+    };
   }
 
-  const submitHandler = (text) => {
-
-    if (text.length > 3) {
-      setTodos((prevToDos) => {
-        return [
-          { text: text, key: Math.random().toString() },
-          ...prevToDos
-        ]
-      });
-    } else {
-      Alert.alert('OOPS!', 'ToDos must be over 3 characters long', [
-        {text: 'Understood', onPress: () => console.log('alert closed')}
-      ]);
-    }
-    
+  getRandomColor = () => {
+    return (
+      "rgb(" + 
+      Math.floor(Math.random() * 256) + "," +
+      Math.floor(Math.random() * 256) + "," +
+      Math.floor(Math.random() * 256) + ")"
+    );
+  }
+  getButtonColor = () => {
+    return (
+      "rgb(" + 
+      Math.floor(Math.random() * 256) + "," +
+      Math.floor(Math.random() * 256) + "," +
+      Math.floor(Math.random() * 256) + ")"
+    );
   }
 
-  return (
-    // <Sandbox />
-    <TouchableWithoutFeedback onPress={() => {
-      Keyboard.dismiss();
-      console.log('dismissed keyboard');
-    }}>
-      <View style={styles.container}>
-        <Header />
-        <View style={styles.content}>
-          <AddTodo submitHandler={submitHandler} />
-          <View style={styles.list}>
-            <FlatList
-              data={todos}
-              renderItem={({ item }) => (
-                <TodoItem item={item} pressHandler={pressHandler} />
-              )}
-            />
-          </View>
-        </View>
+  myButtonPressed = () => {
+    this.setState({randomColor: this.getRandomColor()})
+    this.setState({buttonColor: this.getButtonColor()})
+  }
+
+  render() {
+    return (
+      <View style={[styles.container, {backgroundColor: this.state.randomColor}]}>
+        <TouchableOpacity onPress={this.myButtonPressed}>
+        <Text style={[styles.input], {backgroundColor: this.state.buttonColor, fontSize: 30}}>Login</Text>
+        </TouchableOpacity>
       </View>
-    </TouchableWithoutFeedback>
-  );
+    );
+  }
+  
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center'
   },
-  content: {
-    padding: 40,
-    flex: 1
-  },
-  list: {
-    marginTop: 20,
-    flex: 1
-  },
+  input: {
+    fontSize: 30,
+    paddingVertical: 10,
+    paddingHorizontal: 40,
+    borderRadius: 10,
+    borderWidth: 2,
+    color: 'white',
+    borderColor: 'rgb(23, 34, 45)',
+    backgroundColor: 'purple'
+  }
 });
